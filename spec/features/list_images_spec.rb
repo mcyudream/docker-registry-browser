@@ -4,8 +4,8 @@ feature "Image listing" do
   scenario "Showing the list of available images", :vcr do
     visit "/"
 
-    expect(page).to have_content "Namespace"
-    expect(page).to have_content "/"
+    expect(page).to have_content "命名空间"
+    expect(page).to have_content "根目录"
     expect(page).to have_content "IMG"
     expect(page).to have_content "hello-world"
 

@@ -21,21 +21,22 @@
     end
   %>
 
-  <h5 class="mt-4">Layers</h5>
+  <section class="manifest-section">
+  <div class="subsection-title"><h3>镜像层</h3><span><%= layers.size %> 层</span></div>
+  <div class="layer-list">
 
   <% layers.each do |layer| %>
-    <p class="font-monospace">
-      <small>
-        [<%= layer.index %>] <%= layer.digest %> - <%= layer.percent %>% (<%= layer.size %>)
-      </small>
+    <div class="layer-row">
+      <div class="layer-meta"><span><%= layer.index %></span><code title="<%= layer.digest %>"><%= layer.digest %></code><strong><%= layer.size %></strong></div>
 
       <div class="progress">
         <% layers.each do |inner| %>
           <div class="progress-bar" style="width: <%= inner.percent %>%; background-color: <% if inner.index == layer.index %><%= inner.color %><% else %>transparent<% end %>;"></div>
         <% end %>
       </div>
-    </p>
+    </div>
   <% end %>
 
-  <hr />
+  </div>
+  </section>
 <% end %>

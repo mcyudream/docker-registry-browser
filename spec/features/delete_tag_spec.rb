@@ -8,22 +8,22 @@ feature "Delete Tags" do
   scenario "Successfully delete a tag", :vcr do
     visit "/repo/hello-world/tag/delete-me"
 
-    expect(page).to have_content "Tag"
+    expect(page).to have_content "镜像详情"
     expect(page).to have_content "hello-world:delete-me"
 
-    expect(page).to have_content "Danger Zone"
+    expect(page).to have_content "危险操作"
     within ".border-danger" do
-      click_button "Delete"
+      click_button "删除"
     end
 
     expect(page).to have_selector("#delete-dialog", visible: true)
-    expect(page).to have_content "Do you really want to delete the following tag?"
+    expect(page).to have_content "即将删除以下镜像标签"
     fill_in "delete_confirm", with: "delete-me"
     within "#delete-dialog" do
-      click_link "Delete"
+      click_link "确认删除"
     end
 
-    expect(page).to have_content "The tag delete-me has been deleted."
+    expect(page).to have_content "镜像标签 delete-me 已删除。"
   end
 
   scenario "Successfully delete a tag with token based auth", :vcr do
@@ -32,42 +32,42 @@ feature "Delete Tags" do
 
     visit "/repo/hello-world/tag/delete-me"
 
-    expect(page).to have_content "Tag"
+    expect(page).to have_content "镜像详情"
     expect(page).to have_content "hello-world:delete-me"
 
-    expect(page).to have_content "Danger Zone"
+    expect(page).to have_content "危险操作"
     within ".border-danger" do
-      click_button "Delete"
+      click_button "删除"
     end
 
     expect(page).to have_selector("#delete-dialog", visible: true)
-    expect(page).to have_content "Do you really want to delete the following tag?"
+    expect(page).to have_content "即将删除以下镜像标签"
     fill_in "delete_confirm", with: "delete-me"
     within "#delete-dialog" do
-      click_link "Delete"
+      click_link "确认删除"
     end
 
-    expect(page).to have_content "The tag delete-me has been deleted."
+    expect(page).to have_content "镜像标签 delete-me 已删除。"
   end
 
   scenario "Deletion blocked by registry", :vcr do
     visit "/repo/hello-world/tag/delete-me"
 
-    expect(page).to have_content "Tag"
+    expect(page).to have_content "镜像详情"
     expect(page).to have_content "hello-world:delete-me"
 
-    expect(page).to have_content "Danger Zone"
+    expect(page).to have_content "危险操作"
     within ".border-danger" do
-      click_button "Delete"
+      click_button "删除"
     end
 
     expect(page).to have_selector("#delete-dialog", visible: true)
-    expect(page).to have_content "Do you really want to delete the following tag?"
+    expect(page).to have_content "即将删除以下镜像标签"
     fill_in "delete_confirm", with: "delete-me"
     within "#delete-dialog" do
-      click_link "Delete"
+      click_link "确认删除"
     end
 
-    expect(page).to have_content "The delete request was blocked by the registry."
+    expect(page).to have_content "镜像仓库拒绝了删除请求。"
   end
 end

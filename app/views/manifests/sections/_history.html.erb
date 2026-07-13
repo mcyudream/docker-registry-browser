@@ -1,7 +1,11 @@
-<h5 class="mt-4">History</h5>
-<div class="overflow-auto">
-  <% manifest.history.each do |entry| %>
-    <span class="text-muted small"><%= l entry.created %> <% if entry.comment.present? %>(<%= entry.comment %>)<% end %></span>
-    <p class="mb-3 small font-monospace"><%= entry.created_by %></p>
-  <% end %>
-</div>
+<section class="manifest-section">
+  <div class="subsection-title"><h3>构建历史</h3><span><%= manifest.history.size %> 条记录</span></div>
+  <div class="history-list">
+    <% manifest.history.each do |entry| %>
+      <div class="history-row">
+        <span class="history-dot" aria-hidden="true"></span>
+        <div><time><%= l entry.created %></time><% if entry.comment.present? %><small><%= entry.comment %></small><% end %><code><%= entry.created_by %></code></div>
+      </div>
+    <% end %>
+  </div>
+</section>

@@ -7,23 +7,27 @@ feature "Tag details" do
 
       click_link "latest"
 
-      expect(page).to have_content "Tag"
+      expect(page).to have_content "镜像详情"
       expect(page).to have_content "hello-world:latest"
 
-      expect(page).to have_content "Content Digest"
+      expect(page).to have_content "内容摘要"
       expect(page).to have_content(/sha256:[0-9a-f]{64}/)
 
-      expect(page).to have_content "Size"
+      expect(page).to have_content "镜像大小"
       expect(page).to have_content "743 KB"
 
-      expect(page).to have_content "ENV"
-      expect(page).to have_content "IMAGE=test/hello-world:latest"
+      expect(page).to have_content "环境变量"
+      expect(page).to have_content "IMAGE"
+      expect(page).to have_content "test/hello-world:latest"
 
-      expect(page).to have_content "Labels"
-      expect(page).to have_content "image\ntest/hello-world:latest"
-      expect(page).to have_content "maintainer\nSomebody"
+      expect(page).to have_content "镜像标签"
+      expect(page).to have_content "image"
+      expect(page).to have_content "test/hello-world:latest"
+      expect(page).to have_content "maintainer"
+      expect(page).to have_content "Somebody"
 
-      expect(page).to have_content(/Layers\n\[#000\] sha256:[0-9a-f]{64}/)
+      expect(page).to have_content "镜像层"
+      expect(page).to have_content(/#000\s*sha256:[0-9a-f]{64}/)
     end
   end
 

@@ -1,26 +1,43 @@
-<div class="row my-4">
-  <div class="col-md-12">
-    <div class="card card-border-blue">
-      <div class="card-header py-0">
-        <h4 class="h6 text-muted my-0 mt-3">Repository</h4>
-        <h6 class="h4 mb-3"><%= @repository.name %></h6>
+<nav class="breadcrumb-row" aria-label="面包屑">
+  <%= link_to "镜像目录", root_path %><span>/</span><strong><%= @repository.name %></strong>
+</nav>
 
-        <%= render "sort_links" if @tags.size > 1 %>
-      </div>
-      <% if @tags.any? %>
-        <div>
-          <ul class="list-group list-group-flush">
-            <% @tags.each do |tag| %>
-              <%= render "tag", repository: @repository, tag: tag %>
-            <% end %>
-          </ul>
-        </div>
-      <% else %>
-        <div class="card-body text-center py-5">
-          <h2>No tags</h2>
-          <h4 class="lead text-muted">No tags are available at the moment.</h4>
-        </div>
-      <% end %>
-    </div>
+<section class="repository-hero">
+  <div class="repository-hero-icon">IMG</div>
+  <div class="repository-hero-copy">
+    <p class="eyebrow">镜像仓库</p>
+    <h1><%= @repository.name %></h1>
+    <p>选择一个版本，查看镜像配置、平台架构与镜像层信息。</p>
   </div>
-</div>
+  <span class="hero-stat"><strong><%= @tags.size %></strong> 个版本</span>
+</section>
+
+<section class="version-panel">
+  <header class="version-toolbar">
+    <div>
+      <h2>版本列表</h2>
+      <p>所有可用的镜像标签</p>
+    </div>
+    <% if @tags.any? %>
+      <label class="version-search">
+        <span class="search-icon" aria-hidden="true"></span>
+        <input type="search" placeholder="搜索版本..." data-tag-filter autocomplete="off">
+      </label>
+    <% end %>
+  </header>
+
+  <%= render "sort_links" if @tags.size > 1 %>
+
+  <% if @tags.any? %>
+    <ul class="version-list" data-tag-list>
+      <% @tags.each do |tag| %>
+        <%= render "tag", repository: @repository, tag: tag %>
+      <% end %>
+    </ul>
+    <div class="empty-filter compact" data-tag-empty hidden>
+      <strong>没有匹配的版本</strong><span>请尝试其他标签名称。</span>
+    </div>
+  <% else %>
+    <div class="empty-state compact"><h2>暂无版本</h2><p>此镜像仓库目前没有可用标签。</p></div>
+  <% end %>
+</section>

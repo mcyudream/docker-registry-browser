@@ -1,18 +1,40 @@
 <% if @repositories.any? %>
+  <section class="catalog-intro">
+    <div>
+      <p class="eyebrow">镜像目录</p>
+      <h1>浏览镜像仓库</h1>
+      <p class="catalog-summary">本页共 <%= @repositories.entries.size %> 个镜像仓库</p>
+    </div>
+    <label class="catalog-search">
+      <span class="visually-hidden">筛选镜像仓库</span>
+      <span class="search-icon" aria-hidden="true"></span>
+      <input type="search" placeholder="搜索镜像名称或命名空间..." autocomplete="off" data-repository-filter>
+      <kbd>/</kbd>
+    </label>
+  </section>
+
+  <div data-repository-catalog>
   <% @namespaces.each do |namespace, repositories| %>
     <%= render "namespace", namespace: namespace, repositories: repositories %>
   <% end %>
+  </div>
+
+  <div class="empty-filter" data-filter-empty hidden>
+    <strong>没有匹配的镜像</strong>
+    <span>请尝试其他名称或命名空间。</span>
+  </div>
 
   <% if @repositories.more? %>
-    <div class="text-center">
-      <%= link_to root_path(last: @repositories.last.name), class: "btn btn-outline-secondary px-4" do %>
-        Next page
+    <div class="pagination-action">
+      <%= link_to root_path(last: @repositories.last.name), class: "btn btn-primary px-4" do %>
+        加载下一页
       <% end %>
     </div>
   <% end %>
 <% else %>
-  <div class="card-body text-center py-5">
-    <h2>Empty</h2>
-    <h4 class="lead text-muted">There are no repositories in this registry at the moment.</h4>
+  <div class="empty-state">
+    <span class="empty-state-icon">0</span>
+    <h1>暂无镜像仓库</h1>
+    <p>仓库连接正常，但镜像目录目前为空。</p>
   </div>
 <% end %>

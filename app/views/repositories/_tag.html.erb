@@ -1,9 +1,8 @@
-<li class="list-group-item list-group-item-action py-3 item-tag">
-  <%= link_to tag_path(repo: repository.name, tag: tag), class: "d-flex align-items-center text-reset text-decoration-none" do %>
-    <div class="flex-grow-1">
-      <span class="badge">TAG</span>
-      <span class="mx-2"><%= tag %></span>
-    </div>
-    <%= image_tag "icons/arrow.png", alt: "&rsaquo;", width: "16" %>
+<li class="version-item" data-tag-name="<%= tag.downcase %>">
+  <%= link_to tag_path(repo: repository.name, tag: tag), class: "version-link" do %>
+    <span class="tag-icon">TAG</span>
+    <span class="version-name"><strong><%= tag %></strong><small><%= repository.name %>:<%= tag %></small></span>
+    <% if tag == "latest" %><span class="latest-badge">默认</span><% end %>
+    <span class="version-open">查看详情 <span aria-hidden="true">›</span></span>
   <% end %>
 </li>

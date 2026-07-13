@@ -8,5 +8,10 @@ vendor/* linguist-vendored
 config/credentials/*.yml.enc diff=rails_credentials
 config/credentials.yml.enc diff=rails_credentials
 
+# Executable scripts must keep Unix line endings inside container images.
+bin/* text eol=lf
+Dockerfile text eol=lf
+*.sh text eol=lf
+
 # Mark vendored bootstrap
 app/assets/stylesheets/_bootstrap.scss linguist-vendored

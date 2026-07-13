@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html data-bs-theme="auto" lang="en">
+<html data-bs-theme="auto" lang="zh-CN">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title>Docker Registry Browser</title>
+    <title>容器镜像浏览器</title>
 
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
@@ -17,13 +17,13 @@
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
   </head>
-  <body class="pb-5">
+  <body>
     <%= render "header" %>
 
-    <div class="container pb-5">
+    <main class="app-main container">
       <%= render "flash" %>
       <%= yield %>
-    </div>
+    </main>
 
     <%= render "footer" %>
   </body>

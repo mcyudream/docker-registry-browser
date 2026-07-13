@@ -1,16 +1,15 @@
-<nav class="navbar navbar-expand-md bg-dark border-bottom py-2" data-bs-theme="dark">
-  <div class="container">
-    <%= link_to root_path, class: "navbar-brand d-flex align-items-center" do %>
-      <span class="bs-icon-sm bs-icon-rounded bs-icon-primary d-flex justify-content-center me-2 bs-icon">
-        <%= image_tag "icons/docker-header.png", alt: "App Icon", width: "42" %>
+<nav class="app-header border-bottom">
+  <div class="container app-header-inner">
+    <%= link_to root_path, class: "brand text-decoration-none" do %>
+      <%= image_tag "icons/docker-header.png", alt: "", width: "36", height: "36", class: "brand-mark" %>
+      <span class="brand-copy">
+        <strong>镜像浏览器</strong>
+        <small>容器镜像仓库</small>
       </span>
-      <span>Docker Registry Browser</span>
     <% end %>
-    <button class="navbar-toggler" data-bs-toggle="collapse" ds-bs-target="#navcol-6">
-      <span class="visually-hidden">Toggle navigation</span>
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div id="navcol-6" class="collapse navbar-collapse flex-grow-0 order-md-first"></div>
-    <div class="d-none d-md-block"></div>
+    <div class="registry-status" title="镜像仓库连接状态">
+      <span class="status-dot" aria-hidden="true"></span>
+      仓库在线
+    </div>
   </div>
 </nav>

@@ -16,7 +16,7 @@ feature 'Token Auth' do
 
     visit '/'
 
-    expect(page).to have_text 'There are no repositories in this registry at the moment.'
+    expect(page).to have_text '仓库连接正常，但镜像目录目前为空。'
   end
 
   scenario 'Failed listing of catalog due to ACL issue' do
@@ -24,7 +24,7 @@ feature 'Token Auth' do
 
     visit '/'
 
-    expect(page).to have_text 'The obtained bearer token was rejected by the registry'
+    expect(page).to have_text '镜像仓库拒绝了当前访问令牌。'
   end
 
   scenario 'Successful listing of catalog and repository' do
@@ -34,7 +34,7 @@ feature 'Token Auth' do
     visit '/'
     click_link 'repository'
 
-    expect(page).to have_text 'Repository'
+    expect(page).to have_text '镜像仓库'
     expect(page).to have_text 'repository'
     expect(page).to have_text 'TAG'
     expect(page).to have_text 'latest'
@@ -47,6 +47,6 @@ feature 'Token Auth' do
     visit '/'
     click_link 'repository'
 
-    expect(page).to have_text 'The obtained bearer token was rejected by the registry'
+    expect(page).to have_text '镜像仓库拒绝了当前访问令牌。'
   end
 end
