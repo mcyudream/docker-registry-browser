@@ -1,0 +1,72 @@
+# =============================================================================
+# docker-registry-browser 生产部署编排（Harbor 适配版）
+# =============================================================================
+# 镜像来源：registry.yudream.online/library/registry-browser:latest
+#           （library 为公开项目，任何机器均可匿名 docker pull）
+#
+# 首次部署：
+#   1. 将本文件与 .env 放到部署目录（.env 内容：SECRET_KEY_BASE=<64字节随机值>）
+#      密钥生成：openssl rand -hex 64
+#   2. docker compose -f docker-compose.harbor.yml up -d
+#   3. 访问 http://<主机>:8081
+#
+# 日常升级：
+#   docker compose -f docker-compose.harbor.yml pull
+#   docker compose -f docker-compose.harbor.yml up -d
+#
+# 从源码重新构建并发布（开发机）：
+#   docker build -t registry.yudream.online/library/registry-browser:latest .
+#   docker push  registry.yudream.online/library/registry-browser:latest
+#
+# 应用无状态、不依赖数据库，可随时重建/迁移。
+# =============================================================================
+
+services:
+
+  registry-browser:
+    image: registry.yudream.online/library/registry-browser:latest
+    container_name: registry-browser
+    restart: unless-stopped
+    environment:
+      # 会话加密密钥（必须）：openssl rand -hex 64
+      - "SECRET_KEY_BASE=${SECRET_KEY_BASE:?请在 .env 中设置 SECRET_KEY_BASE，生成方式: openssl rand -hex 64}"
+      # Harbor 实例地址。Harbor 的 API 位于根路径 /api/v2.0，
+      # /harbor/* 只是 Web 控制台的前端路由，这里填根地址即可。
+      - "DOCKER_REGISTRY_URL=https://registry.yudream.online"
+      # registry | harbor | auto（auto 自动探测 Harbor API 并切换）
+      - "REGISTRY_TYPE=auto"
+      # 页面上展示 docker pull 命令用的域名（只填域名和端口）
+      - "PUBLIC_REGISTRY_URL=registry.yudream.online"
+      # ---------------- 可选项 ----------------
+      # 访问私有项目的凭据（留空则匿名浏览公开项目，
+      # 浏览器弹出登录框时输入 Harbor 账号也可以；robot 账号用户名如 'robot$push' 需要写在引号里）
+      # - "BASIC_AUTH_USER=admin"
+      # - "BASIC_AUTH_PASSWORD=your-password"
+      # 默认排序：api | name | version | time（推送时间）
+      # - "SORT_TAGS_BY=time"
+      # - "SORT_TAGS_ORDER=desc"
+      # 每页仓库数量（默认 100）
+      # - "CATALOG_PAGE_SIZE=100"
+      # 自签名证书时跳过 TLS 校验（1/true/yes）
+      # - "NO_SSL_VERIFICATION=true"
+      # 私有 CA 证书（配合下方 volumes 挂载）
+      # - "CA_FILE=/certs/ca.pem"
+      # 允许在页面上删除镜像标签（需要 Harbor 端也允许删除）
+      # - "ENABLE_DELETE_IMAGES=true"
+    ports:
+      - "8081:8080"
+    # 可选：挂载私有 CA / TLS 证书
+    # volumes:
+    #   - ./certs:/certs:ro
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8080/up"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+# 如需域名 + HTTPS 访问，建议在前面加一层反向代理（nginx / traefik / caddy），
+# 例如 caddy 一行即可：
+#   registry-browser.example.com {
+#       reverse_proxy registry-browser:8080
+#   }

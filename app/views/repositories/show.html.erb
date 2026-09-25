@@ -26,7 +26,7 @@
     <% end %>
   </header>
 
-  <%= render "sort_links" if @tags.size > 1 %>
+  <%= render "sort_links", tags: @tags if @tags.size > 1 %>
 
   <% if @tags.any? %>
     <ul class="version-list" data-tag-list>

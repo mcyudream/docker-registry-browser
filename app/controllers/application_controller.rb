@@ -24,7 +24,14 @@ class ApplicationController < ActionController::Base
     when /bearer/i
       token_authentication(details)
     else
-      raise error
+      # Some registries (e.g. the native Harbor API) respond with a plain 401
+      # and no WWW-Authenticate header. Ask the browser for basic credentials
+      # as long as none have been tried yet.
+      if Current.http_basic_auth.blank? && Rails.configuration.x.basic_auth_user.blank?
+        request_http_basic_authentication
+      else
+        render "errors/invalid_credentials"
+      end
     end
   end
 
@@ -35,6 +42,9 @@ class ApplicationController < ActionController::Base
   def token_authentication(details)
     if token_authentication_credentials.present?
       obtain_authentication_token(details)
+    elsif anonymous_token_allowed?
+      # Harbor issues tokens without credentials for public projects.
+      obtain_authentication_token(details, nil, fallback_to_basic: true)
     else
       request_http_basic_authentication
     end
@@ -49,20 +59,26 @@ class ApplicationController < ActionController::Base
     credentials.compact.presence || Current.http_basic_auth.presence
   end
 
-  def obtain_authentication_token(details)
-    auth_params = details[/\w+ (.*)/, 1]
-    auth_params = Hash[auth_params.scan(/(\w+)="([^"]+)"/)]
+  def anonymous_token_allowed?
+    Rails.configuration.x.registry_type.in? %w[auto harbor]
+  end
 
-    return if auth_attempts_exceeded? auth_params["scope"]
+  def obtain_authentication_token(details, credentials = token_authentication_credentials, fallback_to_basic: false)
+    auth_params = parse_auth_challenge(details)
+
+    # Anonymous attempts are not counted: they happen once per request and a
+    # failure falls back to asking the browser for credentials instead of
+    # being retried.
+    return if credentials.present? && auth_attempts_exceeded?(auth_params["scope"])
 
     session[:registry_auth_scope] = auth_params["scope"]
-    session[:registry_auth_token] = ObtainAuthenticationToken.new(auth_params, token_authentication_credentials).call
+    session[:registry_auth_token] = ObtainAuthenticationToken.new(auth_params, credentials).call
 
     set_current_auth
 
     redirect_to request.fullpath if request.get?
   rescue ObtainAuthenticationToken::InvalidCredentials
-    render "errors/invalid_credentials"
+    fallback_to_basic ? request_http_basic_authentication : render("errors/invalid_credentials")
   end
 
   def auth_attempts_exceeded?(scope)
@@ -73,5 +89,10 @@ class ApplicationController < ActionController::Base
 
     render "errors/auth_attempts_exceeded"
     true
+  end
+
+  def parse_auth_challenge(details)
+    challenge = details[/\w+ (.*)/, 1]
+    Hash[challenge.scan(/(\w+)="([^"]+)"/)]
   end
 end

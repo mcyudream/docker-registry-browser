@@ -121,6 +121,8 @@ Possible values:
 * `api`: Keep the sort as provided by the registry API
 * `name`: Sort the tags in alphabetical order
 * `version`: Sort the tags by interpreting them as version numbers
+* `time`: Sort the tags by push time (requires a registry that provides push
+  times, e.g. when `REGISTRY_TYPE` is set to `harbor`)
 
 Default: `name`
 
@@ -150,6 +152,25 @@ Default: `100`
 This option defines how the application will connect to the docker-registry API.
 
 Default: `http://localhost:5000`
+
+#### `REGISTRY_TYPE`
+
+This option selects which API the application uses to browse the registry:
+
+* `registry`: plain Docker Registry HTTP API V2 (default)
+* `harbor`: native [Harbor](https://goharbor.io) REST API v2.0
+* `auto`: probe the registry once and use the Harbor API when it answers on `/api/v2.0/health`, fall back to the plain registry otherwise
+
+The Harbor API is required for Harbor instances because Harbor does not expose
+the docker catalog endpoint (`/v2/_catalog`) to anonymous users. It also
+provides the push times used for sorting, and enables browsing of public
+projects without any credentials.
+
+Please note: `goharbor.cn` / `goharbor.io` are the documentation sites of the
+Harbor project. Point `DOCKER_REGISTRY_URL` at an actual Harbor instance
+(e.g. your own installation or `https://demo.goharbor.io`).
+
+Default: `registry`
 
 #### `NO_SSL_VERIFICATION`
 
@@ -310,6 +331,21 @@ labels:
   - 'traefik.http.middlewares.browser-stripprefix.stripprefix.prefixes=/browser'
   - 'traefik.http.routers.browser.rule=PathPrefix(`/browser`)'
   - 'traefik.http.routers.browser.middlewares=browser-stripprefix@browser'
+```
+
+## Harbor
+
+[Harbor](https://goharbor.io) instances are supported via the native Harbor API
+(set `REGISTRY_TYPE=harbor` or `REGISTRY_TYPE=auto`, see `REGISTRY_TYPE`).
+
+With anonymous access enabled for public projects the application will show all
+public projects and their images without any credentials, including the push
+times that can be used to sort the tags of an image. Accessing private projects
+works by providing credentials via `BASIC_AUTH_USER` / `BASIC_AUTH_PASSWORD`
+(or by entering them in the browser prompt when the application asks for them).
+
+```shell
+$ docker run --name registry-browser   -e SECRET_KEY_BASE="..."   -e DOCKER_REGISTRY_URL=https://demo.goharbor.io   -e REGISTRY_TYPE=harbor   -p 8080:8080   klausmeyer/docker-registry-browser
 ```
 
 ## Token Authentication

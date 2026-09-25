@@ -35,7 +35,7 @@ class ObtainAuthenticationToken
 
   def client
     Faraday.new url: realm, ssl: ssl_options do |f|
-      f.request :authorization, :basic, *creds
+      f.request :authorization, :basic, *creds if creds.present?
       f.response :json, content_type: /json|prettyjws/
       f.response :logger, Rails.configuration.logger, Rails.configuration.x.registry_log_options
       f.response :raise_error

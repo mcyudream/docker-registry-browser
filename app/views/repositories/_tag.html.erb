@@ -1,8 +1,11 @@
-<li class="version-item" data-tag-name="<%= tag.downcase %>">
-  <%= link_to tag_path(repo: repository.name, tag: tag), class: "version-link" do %>
+<li class="version-item" data-tag-name="<%= tag.name.downcase %>">
+  <%= link_to tag_path(repo: repository.name, tag: tag.name), class: "version-link" do %>
     <span class="tag-icon">TAG</span>
-    <span class="version-name"><strong><%= tag %></strong><small><%= repository.name %>:<%= tag %></small></span>
-    <% if tag == "latest" %><span class="latest-badge">默认</span><% end %>
+    <span class="version-name"><strong><%= tag.name %></strong><small><%= repository.name %>:<%= tag.name %></small></span>
+    <% if tag.push_time.present? %>
+      <span class="version-time"><time datetime="<%= tag.push_time.iso8601 %>"><%= tag.push_time.strftime("%Y-%m-%d %H:%M") %></time></span>
+    <% end %>
+    <% if tag.name == "latest" %><span class="latest-badge">默认</span><% end %>
     <span class="version-open">查看详情 <span aria-hidden="true">›</span></span>
   <% end %>
 </li>

@@ -1,7 +1,9 @@
 <div class="sort-bar">
   <span>排序方式</span>
   <div class="segmented-control" aria-label="排序方式">
-    <% {"api" => "仓库顺序", "name" => "名称", "version" => "版本"}.each do |key, name| %>
+    <% sorts = { "api" => "仓库顺序", "name" => "名称", "version" => "版本" } %>
+    <% sorts["time"] = "推送时间" if tags.any? { |tag| tag.push_time.present? } %>
+    <% sorts.each do |key, name| %>
       <%= link_to name, {sort_tags_by: key, sort_tags_order: sort_tags_order}, class: class_names(active: sort_tags_by == key) %>
     <% end %>
   </div>

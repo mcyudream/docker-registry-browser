@@ -28,7 +28,7 @@ describe Repository do
           repo = Repository.find name
           expect(repo).to be_instance_of Repository
           expect(repo.name).to eq name
-          expect(repo.tags).to eq %w[latest]
+          expect(repo.tags.map(&:name)).to eq %w[latest]
         end
       end
     end

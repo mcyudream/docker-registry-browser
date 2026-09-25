@@ -1,28 +1,14 @@
-class Repository < Resource
+class Repository
   include ActiveModel::Model
 
-  attr_accessor :name, :tags
+  attr_accessor :name, :tags, :artifact_count, :pull_count, :update_time
 
-  def self.list(count: Rails.configuration.x.catalog_page_size, last: nil)
-    response = client.get "/v2/_catalog", { n: count, last: last }.compact
-    repositories = response.body["repositories"] || []
-    entries  = repositories.map { |name| new(name: name) }
-
-    Collection.new entries: entries, more: response.headers.has_key?("Link")
+  def self.list(page: nil, last: nil)
+    Registry.backend.list_repositories(page: page, last: last)
   end
 
   def self.find(name)
-    begin
-      response = client.get "/v2/#{name}/tags/list"
-      tags     = response.body["tags"]
-    rescue Faraday::ResourceNotFound => e
-      tags = nil
-    end
-
-    new(
-      name: name,
-      tags: Array.wrap(tags)
-    )
+    Registry.backend.find_repository(name)
   end
 
   def namespace(root = "")

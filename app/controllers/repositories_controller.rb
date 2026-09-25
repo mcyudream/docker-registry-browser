@@ -9,7 +9,7 @@ class RepositoriesController < ApplicationController
   end
 
   def index
-    @repositories = Repository.list(last: params[:last])
+    @repositories = Repository.list(page: params[:page], last: params[:last])
     @namespaces   = Hash[@repositories.group_by(&:namespace).sort]
   end
 
@@ -27,7 +27,8 @@ class RepositoriesController < ApplicationController
   def sort_tags
     tags = @repository.tags
     tags = tags.sort if sort_tags_by == "name"
-    tags = VersionSorter.sort(tags) if sort_tags_by == "version"
+    tags = VersionSorter.sort(tags) { |tag| tag.name } if sort_tags_by == "version"
+    tags = tags.sort_by { |tag| tag.push_time || Time.at(0) } if sort_tags_by == "time"
     tags = tags.reverse if sort_tags_order == "desc"
     tags
   end

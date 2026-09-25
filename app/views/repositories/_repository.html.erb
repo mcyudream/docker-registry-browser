@@ -5,6 +5,14 @@
       <strong><%= repository.image %></strong>
       <small><%= repository.name %></small>
     </div>
+    <% if repository.update_time.present? %>
+      <div class="repository-meta">
+        <% if repository.artifact_count.present? %>
+          <span><%= repository.artifact_count %> 个版本</span>
+        <% end %>
+        <time datetime="<%= repository.update_time.iso8601 %>"><%= repository.update_time.strftime("%Y-%m-%d %H:%M") %></time>
+      </div>
+    <% end %>
     <span class="chevron" aria-hidden="true">›</span>
   <% end %>
 </li>

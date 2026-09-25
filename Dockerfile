@@ -1,5 +1,6 @@
-# syntax=docker/dockerfile:1
-# check=error=true
+# NOTE: intentionally no "# syntax=" directive here — registry mirrors that
+# block the docker/dockerfile:1 frontend image would fail the build. The
+# built-in BuildKit frontend supports everything used below.
 
 # This Dockerfile is designed for production, not development. Use with Kamal or build'n'run by hand:
 # docker build -t filamentory_rails .
@@ -16,7 +17,7 @@ WORKDIR /rails
 
 # Install base packages
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y curl libjemalloc2 && \
+    apt-get install --no-install-recommends -y ca-certificates curl libjemalloc2 && \
     ln -s /usr/lib/$(uname -m)-linux-gnu/libjemalloc.so.2 /usr/local/lib/libjemalloc.so && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 

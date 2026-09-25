@@ -26,7 +26,7 @@
 
   <% if @repositories.more? %>
     <div class="pagination-action">
-      <%= link_to root_path(last: @repositories.last.name), class: "btn btn-primary px-4" do %>
+      <%= link_to root_path(@repositories.next_query), class: "btn btn-primary px-4" do %>
         加载下一页
       <% end %>
     </div>
